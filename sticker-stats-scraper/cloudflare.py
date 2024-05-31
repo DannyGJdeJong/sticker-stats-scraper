@@ -35,7 +35,7 @@ def run_query(query, params = None):
             logger.error(res.json())
 
 # Insert total pack stats into database
-def insert_total_pack_usage(pack_id, datetime, total_usage, total_installed, total_removed):
+def insert_total_pack_usage(pack_id: str, datetime: str, total_usage: int, total_installed: int, total_removed: int):
     query = """
     INSERT INTO total_pack_usage ("pack_id", "datetime", "total_usage", "total_installed", "total_removed")
     VALUES (?, ?, ?, ?, ?);

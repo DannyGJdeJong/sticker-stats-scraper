@@ -24,10 +24,7 @@ async def pack_stats_handler(event: events.NewMessage.Event):
     total_installed = int(re.search(r"Total installed: \d*", event.message.message).group().split(":")[1].strip())
     total_removed = int(re.search(r"Total removed: \d*", event.message.message).group().split(":")[1].strip())
 
-    print(current_pack_index)
-    print(STICKER_PACK_IDS[current_pack_index])
-
-    insert_total_pack_usage(STICKER_PACK_IDS[current_pack_index], event.date.strftime("%Y-%m-%d %H:%M:%S"), total_usage, total_installed, total_removed)
+    insert_total_pack_usage(str(STICKER_PACK_IDS[current_pack_index]), event.date.strftime("%Y-%m-%d %H:%M:%S"), total_usage, total_installed, total_removed)
 
     await get_stats_from_next_pack()
 
