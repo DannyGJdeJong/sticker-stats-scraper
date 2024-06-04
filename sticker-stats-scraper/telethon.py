@@ -44,7 +44,6 @@ async def get_stats_from_next_pack():
 
     if current_pack_index >= len(STICKER_PACK_IDS):
         current_pack_index = 0
-        await get_stats_from_next_pack()
 
     current_pack_id = STICKER_PACK_IDS[current_pack_index]
     sticker_pack: types.StickerPack = await client(functions.messages.GetStickerSetRequest(types.InputStickerSetID(id=int(current_pack_id), access_hash=int(TELETHON_ACCESS_HASH)), 0))
