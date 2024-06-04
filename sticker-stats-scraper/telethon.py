@@ -1,5 +1,6 @@
 import re
 import asyncio
+import datetime
 
 from telethon import TelegramClient, events, sessions
 from telethon.tl import functions, types
@@ -42,14 +43,14 @@ async def get_stats_from_next_pack():
         current_pack_index += 1
 
     if current_pack_index >= len(STICKER_PACK_IDS):
-        await client.disconnect()
-        return
+        current_pack_index = 0
+        get_stats_from_next_pack()
 
     current_pack_id = STICKER_PACK_IDS[current_pack_index]
     sticker_pack: types.StickerPack = await client(functions.messages.GetStickerSetRequest(types.InputStickerSetID(id=int(current_pack_id), access_hash=int(TELETHON_ACCESS_HASH)), 0))
 
-    await client.send_message("@Stickers", "/packstats")
-    await client.send_message("@Stickers", sticker_pack.set.short_name)
+    await client.send_message("@Stickers", "/packstats", schedule=datetime.timedelta(seconds=30))
+    await client.send_message("@Stickers", sticker_pack.set.short_name, schedule=datetime.timedelta(seconds=30))
 
 async def main():
     await client.start()
