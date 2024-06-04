@@ -12,6 +12,7 @@ from .cloudflare import insert_total_pack_usage
 client = TelegramClient(sessions.StringSession(TELETHON_SESSION_STRING), TELETHON_API_ID, TELETHON_API_HASH)
 
 current_pack_index = None
+last_message = datetime.datetime.now()
 
 #================#
 # Event Handlers #
@@ -36,6 +37,7 @@ async def pack_stats_handler(event: events.NewMessage.Event):
 # Send message to @Stickers to get stats for the next pack
 async def get_stats_from_next_pack():
     global current_pack_index
+    global last_message
 
     if current_pack_index is None:
         current_pack_index = 0
@@ -51,9 +53,20 @@ async def get_stats_from_next_pack():
     await client.send_message("@Stickers", "/packstats", schedule=datetime.timedelta(seconds=30))
     await client.send_message("@Stickers", sticker_pack.set.short_name, schedule=datetime.timedelta(seconds=30))
 
+    last_message = datetime.datetime.now()
+
+# Periodically check if the last message was sent more than 2 minutes ago
+async def run_periodic_task():
+    while True:
+        if last_message + datetime.timedelta(minutes=2) < datetime.datetime.now():
+            await get_stats_from_next_pack()
+
+        await asyncio.sleep(30)
+
 async def main():
     await client.start()
     await get_stats_from_next_pack()
+    asyncio.create_task(run_periodic_task())
     await client.run_until_disconnected()
 
 def run_event_loop():
